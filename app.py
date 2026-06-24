@@ -3,22 +3,110 @@ import pickle
 import numpy as np
 
 # Load model
-with open("model.pkl", "rb") as file:
-    model = pickle.load(file)
+model = pickle.load(open("heart_model.pkl", "rb"))
+scaler = pickle.load(open("scaler.pkl", "rb"))
 
-st.title("Machine Learning Prediction App")
+st.title("❤️ Heart Disease Predictor")
 
-st.write("Enter the values below and click Predict")
+st.write("Enter patient information below")
 
-# Example inputs (change these according to your model)
-feature1 = st.number_input("Feature 1", value=0.0)
-feature2 = st.number_input("Feature 2", value=0.0)
-feature3 = st.number_input("Feature 3", value=0.0)
-feature4 = st.number_input("Feature 4", value=0.0)
+# Inputs
+
+age = st.number_input("Age", 20, 100, 50)
+
+sex = st.selectbox(
+    "Sex",
+    [0, 1]
+)
+
+cp = st.selectbox(
+    "Chest Pain Type (cp)",
+    [0, 1, 2, 3]
+)
+
+trestbps = st.number_input(
+    "Resting Blood Pressure",
+    80,
+    250,
+    120
+)
+
+chol = st.number_input(
+    "Cholesterol",
+    100,
+    600,
+    200
+)
+
+fbs = st.selectbox(
+    "Fasting Blood Sugar >120",
+    [0, 1]
+)
+
+restecg = st.selectbox(
+    "Resting ECG",
+    [0, 1, 2]
+)
+
+thalach = st.number_input(
+    "Maximum Heart Rate",
+    50,
+    250,
+    150
+)
+
+exang = st.selectbox(
+    "Exercise Induced Angina",
+    [0, 1]
+)
+
+oldpeak = st.number_input(
+    "Old Peak",
+    0.0,
+    10.0,
+    1.0
+)
+
+slope = st.selectbox(
+    "Slope",
+    [0, 1, 2]
+)
+
+ca = st.selectbox(
+    "Number of Major Vessels",
+    [0, 1, 2, 3, 4]
+)
+
+thal = st.selectbox(
+    "Thal",
+    [0, 1, 2, 3]
+)
+
+# Predict button
 
 if st.button("Predict"):
-    features = np.array([[feature1, feature2, feature3, feature4]])
 
-    prediction = model.predict(features)
+    data = np.array([[
+        age,
+        sex,
+        cp,
+        trestbps,
+        chol,
+        fbs,
+        restecg,
+        thalach,
+        exang,
+        oldpeak,
+        slope,
+        ca,
+        thal
+    ]])
 
-    st.success(f"Prediction: {prediction[0]}")
+    data = scaler.transform(data)
+
+    prediction = model.predict(data)
+
+    if prediction[0] == 1:
+        st.error("⚠️ Heart Disease Predicted")
+    else:
+        st.success("✅ No Heart Disease Predicted")
